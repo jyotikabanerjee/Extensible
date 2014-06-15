@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Extensible Property Modification</title>
+    <script>
+        var p1 = {
+            name: "Jim",
+            id: 1234
+        }
+
+        p1.setName = function (str){
+            this.name = str;
+        }
+
+
+        function Person(name, id)
+        {
+            this.name = name;
+            this.id = id;
+
+        };
+
+        var p2 = new Person("Jessica", 5678);
+
+        console.log("p1: "+p1);
+        console.log("p2: "+p2);
+
+        var p3 = Object.create(p1);
+        console.log("p3: "+p3);
+
+        p3.setName = function (str){
+            this.name = str;
+        }
+
+        console.log(Object.getPrototypeOf(p1));
+        console.log(Object.getPrototypeOf(p2));
+        console.log(Object.getPrototypeOf(p3));
+
+
+        /**First - Checking if objects are extensible**/
+        console.log(Object.isExtensible(p1));
+        console.log(Object.isExtensible(p2));
+        console.log(Object.isExtensible(p3));
+
+        /**Second - Preventing extensibility of object p2**/
+        p2.phone1 = "321219";
+        console.log("p2.phone1 ="+p2.phone1);
+        Object.preventExtensions(p2);
+        p2.phone2 = '321219';
+        console.log("p2.phone2 ="+p2.phone2);  // Yields output "undefined"
+        console.log("Is the object p2 extensible? :"+Object.isExtensible(p2));
+
+        /**Third - Sealing Object p3**/
+        //Sealing an object makes it inextensible and non-configurable.
+        //i.e. you cannot add new properties or configure/delete existing ones.
+        //Existing properties that are writable can be set.
+        p3.phone1 = "656578";
+        console.log("p3.phone1: "+p3.phone1);
+        //p3.name = "Julie"  --- This works!
+        //console.log("Name of p3: "+p3.name); --- This works~!!!
+        Object.seal(p3);
+
+        //Adding new property
+        p3.phone2 = "89008";
+
+        //Changing existing property
+        console.log("Trying to change name of p3 from "+p3.name+" to Julie");
+        p3.name = "Julie";
+        console.log("Name of person p3: "+p3.name); //WHY DOES THIS FAIL??
+        console.log("Using mutator to set name of p3 to Julie");
+        p3.setName("Julie");
+        console.log("Name of person p3: "+p3.name); //WHY DOES THIS FAIL??
+        console.log("Is the object p3 extensible? :"+Object.isExtensible(p3));
+        console.log("Is the object p3 sealed? :"+Object.isSealed(p3));
+
+        /**Fourth - Freezing Object p1**/
+        //Freezing an object makes it inextensible, non-configurable and non-writable.
+        //i.e. you cannot add new properties or configure/delete existing ones.
+        //All properties become read-only.
+        console.log("Sealing p1")
+        Object.seal(p1);
+        console.log("Using mutator to set name of p1 to Julie");
+        p1.setName("Julie");
+        console.log("Name of p1: "+p1.name);
+        console.log("Using '=' to set name of p1 to Jim" );
+        p1.name = "Jim"
+        console.log("Name of p1: "+p1.name);
+        console.log("Freezing p1")
+        Object.freeze(p1);
+        //Adding new property
+        p1.phone1 ="792879";
+        //Changing existing property
+        p1.id = 4321;
+        console.log("Name: "+p1.name+" ID: "+p1.id+ " Ph #: "+p1.phone1);
+        console.log("Is the object p1 extensible? :"+Object.isExtensible(p1));
+        console.log("Is the object p1 sealed? :"+Object.isSealed(p1));
+        console.log("Is the object p1 frozen? :"+Object.isFrozen(p1));
+        console.log("Setting name of p1 to: Jason : using mutator");
+        p1.setName("Jason");
+        console.log("Name of p1: "+p1.name);
+
+        console.log()
+
+
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
